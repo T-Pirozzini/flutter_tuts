@@ -14,6 +14,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<NoteData>(context, listen: false).initializeNotes();
+  }
+
   // create new note
   void createNewNote() {
     // create a new id
@@ -71,15 +77,29 @@ class _HomePageState extends State<HomePage> {
             ),
 
             // list of notes
-            CupertinoListSection.insetGrouped(
-              children: List.generate(
-                value.getAllNotes().length,
-                (index) => CupertinoListTile(
-                  title: Text(value.getAllNotes()[index].text),
-                  onTap: () => goToNotePage(value.getAllNotes()[index], false),
-                ),
-              ),
-            ),
+            value.getAllNotes().length == 0
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 50.0),
+                    child: Center(
+                      child: Text("Nothing here..",
+                          style: TextStyle(color: Colors.grey[400])),
+                    ),
+                  )
+                : CupertinoListSection.insetGrouped(
+                    children: List.generate(
+                      value.getAllNotes().length,
+                      (index) => CupertinoListTile(
+                        title: Text(value.getAllNotes()[index].text),
+                        onTap: () =>
+                            goToNotePage(value.getAllNotes()[index], false),
+                        trailing: IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () =>
+                              deleteNote(value.getAllNotes()[index]),
+                        ),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
