@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_notes/models/note.dart';
+import 'package:flutter_notes/models/note_data.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:provider/provider.dart';
 
 class EditingNotePage extends StatefulWidget {
   EditingNotePage({
@@ -34,12 +37,89 @@ class _EditingNotePageState extends State<EditingNotePage> {
   }
 
   // add new note
-  void addNewNote(int i) {
-    
+  void addNewNote() {
+    // get new id
+    int id = Provider.of<NoteData>(context, listen: false).getAllNotes().length;
+    // get text from editor
+    String text = _controller.document.toPlainText();
+    // add the new note
+    Provider.of<NoteData>(context, listen: false).addNewNote(Note(
+      id: id,
+      text: text,
+    ));
+  }
+
+  // update existing note
+  void updateNote() {
+    // get text from editor
+    String text = _controller.document.toPlainText();
+    // update note
+    Provider.of<NoteData>(context, listen: false).updateNote(widget.note, text);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // it's a new note
+            if (widget.isNewNote && !_controller.document.isEmpty()) {
+              addNewNote();
+            }
+            // it's an existing note
+            else {
+              updateNote();
+            }
+            Navigator.pop(context);
+          },
+          color: Colors.black,
+        ),
+      ),
+      body: Column(
+        children: [
+          // toolbar
+          QuillToolbar.basic(
+            controller: _controller,
+            showAlignmentButtons: false,
+            showBackgroundColorButton: false,
+            showCenterAlignment: false,
+            showColorButton: false,
+            showCodeBlock: false,
+            showDirection: false,
+            showFontFamily: false,
+            showDividers: false,
+            showIndent: false,
+            showHeaderStyle: false,
+            showLink: false,
+            showSearchButton: false,
+            showInlineCode: false,
+            showQuote: false,
+            showListNumbers: false,
+            showListBullets: false,
+            showClearFormat: false,
+            showBoldButton: false,
+            showFontSize: false,
+            showItalicButton: false,
+            showUnderLineButton: false,
+            showStrikeThrough: false,
+            showListCheck: false,
+          ),
+          // editor
+          Expanded(
+            child: Container(
+              child: QuillEditor.basic(
+                controller: _controller,
+                readOnly: false,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

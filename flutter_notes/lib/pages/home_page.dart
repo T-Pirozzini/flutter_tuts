@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
         MaterialPageRoute(
           builder: (context) => EditingNotePage(
             note: note,
-            isNewNote: false,
+            isNewNote: isNewNote,
           ),
         ));
   }
@@ -73,9 +73,10 @@ class _HomePageState extends State<HomePage> {
             // list of notes
             CupertinoListSection.insetGrouped(
               children: List.generate(
-                2,
+                value.getAllNotes().length,
                 (index) => CupertinoListTile(
                   title: Text(value.getAllNotes()[index].text),
+                  onTap: () => goToNotePage(value.getAllNotes()[index], false),
                 ),
               ),
             ),
