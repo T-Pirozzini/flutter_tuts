@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_home/util/smart_device_box.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -80,17 +81,20 @@ class _HomePageState extends State<HomePage> {
                 child: Text("Smart Decives"),
               ),
 
+              // grid
               Expanded(
                 child: GridView.builder(
                   itemCount: mySmartDevices.length,
+                  padding: const EdgeInsets.all(25),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2),
+                    crossAxisCount: 2,
+                    childAspectRatio: 1 / 1.3,
+                  ),
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        color: Colors.orange,
-                      ),
+                    return SmartDeviceBox(
+                      smartDeviceName: mySmartDevices[index][0],
+                      iconPath: mySmartDevices[index][1],
+                      poweron: mySmartDevices[index][2],
                     );
                   },
                 ),
