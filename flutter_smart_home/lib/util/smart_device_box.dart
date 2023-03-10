@@ -7,12 +7,14 @@ class SmartDeviceBox extends StatelessWidget {
   final String smartDeviceName;
   final String iconPath;
   final bool powerOn;
+  void Function(bool)? onChanged;
 
-  const SmartDeviceBox({
+  SmartDeviceBox({
     super.key,
     required this.smartDeviceName,
     required this.iconPath,
     required this.powerOn,
+    required this.onChanged,
   });
 
   @override
@@ -53,7 +55,7 @@ class SmartDeviceBox extends StatelessWidget {
                     angle: pi / 2,
                     child: CupertinoSwitch(
                       value: powerOn,
-                      onChanged: (value) {},
+                      onChanged: onChanged,
                     ),
                   ),
                 ],

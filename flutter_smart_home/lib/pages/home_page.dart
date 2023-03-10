@@ -22,6 +22,13 @@ class _HomePageState extends State<HomePage> {
     ["Smart Fan", "lib/icons/fan.png", false],
   ];
 
+  // power button switched
+  void powerSwitchChanged(bool value, int index) {
+    setState(() {
+      mySmartDevices[index][2] = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +85,7 @@ class _HomePageState extends State<HomePage> {
               // smart devices + grid
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: Text("Smart Decives"),
+                child: const Text("Smart Decives"),
               ),
 
               // grid
@@ -94,7 +101,8 @@ class _HomePageState extends State<HomePage> {
                     return SmartDeviceBox(
                       smartDeviceName: mySmartDevices[index][0],
                       iconPath: mySmartDevices[index][1],
-                      poweron: mySmartDevices[index][2],
+                      powerOn: mySmartDevices[index][2],
+                      onChanged: (value) => powerSwitchChanged(value, index),
                     );
                   },
                 ),
