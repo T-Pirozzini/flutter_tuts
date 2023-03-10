@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_home/util/smart_device_box.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -70,28 +71,54 @@ class _HomePageState extends State<HomePage> {
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text("Welcome home,"),
+                  children: [
                     Text(
-                      "TRAVIS PIROZZINI",
-                      style: TextStyle(fontSize: 40),
+                      "Welcome home,",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    Text(
+                      "TRAVIS",
+                      style: GoogleFonts.bebasNeue(
+                        fontSize: 72,
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 25),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                child: Divider(
+                  color: Colors.grey[400],
+                  thickness: 1,
+                ),
+              ),
+
+              const SizedBox(height: 25),
 
               // smart devices + grid
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-                child: const Text("Smart Decives"),
+                child: Text(
+                  "Smart Devices",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: Colors.grey[800],
+                  ),
+                ),
               ),
 
               // grid
               Expanded(
                 child: GridView.builder(
                   itemCount: mySmartDevices.length,
+                  physics: const NeverScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(25),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
