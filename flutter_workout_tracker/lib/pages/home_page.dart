@@ -84,6 +84,7 @@ class _HomePageState extends State<HomePage> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: createNewWorkout,
+          child: const Icon(Icons.add),
         ),
         body: ListView.builder(
           itemCount: value.getWorkoutList().length,
