@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'exercise.dart';
 
 class Workout {
