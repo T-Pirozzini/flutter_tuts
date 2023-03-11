@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_workout_tracker/pages/workout_page.dart';
 import 'package:provider/provider.dart';
 import '../data/workout_data.dart';
 
@@ -44,7 +45,9 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WorkoutPage(),
+        builder: (context) => WorkoutPage(
+          workoutName: workoutName,
+        ),
       ),
     );
   }
@@ -87,8 +90,9 @@ class _HomePageState extends State<HomePage> {
           itemBuilder: (context, index) => ListTile(
             title: Text(value.getWorkoutList()[index].name),
             trailing: IconButton(
-              icon: Icon(Icons.arrow_forward_ios),
-              onPressed: goToWorkoutPage,
+              icon: const Icon(Icons.arrow_forward_ios),
+              onPressed: () =>
+                  goToWorkoutPage(value.getWorkoutList()[index].name),
             ),
           ),
         ),
