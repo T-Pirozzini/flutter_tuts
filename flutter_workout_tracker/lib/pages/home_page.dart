@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_workout_tracker/components/heat_map.dart';
 import 'package:flutter_workout_tracker/pages/workout_page.dart';
 import 'package:provider/provider.dart';
 import '../data/workout_data.dart';
@@ -86,6 +87,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
+        backgroundColor: Colors.grey[300],
         appBar: AppBar(
           title: const Text('Workout Tracker'),
         ),
@@ -93,16 +95,28 @@ class _HomePageState extends State<HomePage> {
           onPressed: createNewWorkout,
           child: const Icon(Icons.add),
         ),
-        body: ListView.builder(
-          itemCount: value.getWorkoutList().length,
-          itemBuilder: (context, index) => ListTile(
-            title: Text(value.getWorkoutList()[index].name),
-            trailing: IconButton(
-              icon: const Icon(Icons.arrow_forward_ios),
-              onPressed: () =>
-                  goToWorkoutPage(value.getWorkoutList()[index].name),
+        body: ListView(
+          children: [
+            // HEAT MAP
+            MyHeatMap(
+                datasets: value.heatMapDataSet,
+                startDateYYYYMMDD: value.getStartDate()),
+
+            // WORKOUT LIST
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: value.getWorkoutList().length,
+              itemBuilder: (context, index) => ListTile(
+                title: Text(value.getWorkoutList()[index].name),
+                trailing: IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios),
+                  onPressed: () =>
+                      goToWorkoutPage(value.getWorkoutList()[index].name),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
