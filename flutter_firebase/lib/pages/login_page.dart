@@ -19,10 +19,21 @@ class _LoginPageState extends State<LoginPage> {
 
   // sign in
   Future signIn() async {
+    // loading circle
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+
     await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
     );
+
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
   }
 
   @override
