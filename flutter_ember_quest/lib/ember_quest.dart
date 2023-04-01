@@ -8,6 +8,8 @@ import 'objects/star.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/events.dart';
 
+import 'overlays/hud.dart';
+
 class EmberQuestGame extends FlameGame
     with HasCollisionDetection, HasKeyboardHandlerComponents {
   EmberQuestGame();
@@ -17,6 +19,8 @@ class EmberQuestGame extends FlameGame
   final Vector2 velocity = Vector2.zero();
   late double lastBlockXPosition = 0.0;
   late UniqueKey lastBlockKey;
+  int starsCollected = 0;
+  int health = 3;
 
   @override
   Color backgroundColor() {
@@ -34,7 +38,31 @@ class EmberQuestGame extends FlameGame
       'star.png',
       'water_enemy.png',
     ]);
-    initializeGame();
+    initializeGame(true);
+  }
+
+  void initializeGame(bool loadHud) {
+    // Assume that size.x < 3200
+    final segmentsToLoad = (size.x / 640).ceil();
+    segmentsToLoad.clamp(0, segments.length);
+
+    for (var i = 0; i <= segmentsToLoad; i++) {
+      loadGameSegments(i, (640 * i).toDouble());
+    }
+
+    _ember = EmberPlayer(
+      position: Vector2(128, canvasSize.y - 128),
+    );
+    add(_ember);
+    if (loadHud) {
+      add(Hud());
+    }
+  }
+
+  void reset() {
+    starsCollected = 0;
+    health = 3;
+    initializeGame(false);
   }
 
   void loadGameSegments(int segmentIndex, double xPositionOffset) {
@@ -66,20 +94,5 @@ class EmberQuestGame extends FlameGame
           break;
       }
     }
-  }
-
-  void initializeGame() {
-    // Assume that size.x < 3200
-    final segmentsToLoad = (size.x / 640).ceil();
-    segmentsToLoad.clamp(0, segments.length);
-
-    for (var i = 0; i <= segmentsToLoad; i++) {
-      loadGameSegments(i, (640 * i).toDouble());
-    }
-
-    _ember = EmberPlayer(
-      position: Vector2(128, canvasSize.y - 128),
-    );
-    add(_ember);
-  }
+  }  
 }

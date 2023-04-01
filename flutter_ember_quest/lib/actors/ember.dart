@@ -80,12 +80,34 @@ class EmberPlayer extends SpriteAnimationComponent
         position += collisionNormal.scaled(separationDistance);
       }
     }
+    void hit() {
+      if (!hitByEnemy) {
+        game.health--;
+        hitByEnemy = true;
+      }
+      add(
+        OpacityEffect.fadeOut(
+          EffectController(
+            alternate: true,
+            duration: 0.1,
+            repeatCount: 5,
+          ),
+        )..onComplete = () {
+            hitByEnemy = false;
+          },
+      );
+    }
+
     if (other is Star) {
       other.removeFromParent();
     }
 
     if (other is WaterEnemy) {
       hit();
+    }
+    if (other is Star) {
+      other.removeFromParent();
+      game.starsCollected++;
     }
 
     super.onCollision(intersectionPoints, other);
@@ -145,6 +167,14 @@ class EmberPlayer extends SpriteAnimationComponent
     if (position.x + 64 >= game.size.x / 2 && horizontalDirection > 0) {
       velocity.x = 0;
       game.objectSpeed = -moveSpeed;
+    }
+    // If ember fell in pit, then game over.
+    if (position.y > game.size.y + size.y) {
+      game.health = 0;
+    }
+
+    if (game.health <= 0) {
+      removeFromParent();
     }
   }
 }
