@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_google_sheets/components/button.dart';
 import 'package:flutter_google_sheets/components/notes_grid.dart';
-
-import '../components/textbox.dart';
+import 'package:flutter_google_sheets/services/google_sheets_api.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,8 +12,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _controller = TextEditingController();
+
+  @override
+  void initState() {
+    _controller.addListener(() => setState(() {}));
+    super.initState();
+  }
+
   void _post() {
-    print(_controller.text);
+    GoogleSheetsApi.insert(_controller.text);
+    _controller.clear();
     setState(() {});
   }
 
@@ -34,10 +41,7 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: [
           Expanded(
-            child: NotesGrid(
-              text: _controller.text,
-              numberOfNotes: 6,
-            ),
+            child: NotesGrid(),
           ),
           Container(
             child: Column(

@@ -18,13 +18,25 @@ class GoogleSheetsApi {
 ''';
 
 // set up & connect to the spreadsheet
-  static final _spreadsheetId = '1ZAeDl6i_CDeB8v880Vm_rke76ZrZj1cLrkIED1I91_c';
-  static final gsheets = GSheets(_credentials);
+  static const _spreadsheetId = '1ZAeDl6i_CDeB8v880Vm_rke76ZrZj1cLrkIED1I91_c';
+  static final _gsheets = GSheets(_credentials);
   static Worksheet? _worksheet;
+
+// some variables to keep track of
+  static int numberOfNotes = 0;
+  static List<String> currentNotes = [];
 
 // initialize the spreadsheet
   Future init() async {
-    final ss = await gsheets.spreadsheet(_spreadsheetId);
-    var _worksheet = ss.worksheetByTitle('Worksheet1');
+    final ss = await _gsheets.spreadsheet(_spreadsheetId);
+    _worksheet = ss.worksheetByTitle('Worksheet1');
+  }
+
+  // insert a new note
+  static Future insert(String note) async {
+    if (_worksheet == null) return;
+    numberOfNotes++;
+    currentNotes.add(note);
+    await _worksheet!.values.appendRow([note]);
   }
 }
