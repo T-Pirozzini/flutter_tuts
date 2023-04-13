@@ -25,11 +25,37 @@ class GoogleSheetsApi {
 // some variables to keep track of
   static int numberOfNotes = 0;
   static List<String> currentNotes = [];
+  static bool loading = true;
 
 // initialize the spreadsheet
   Future init() async {
     final ss = await _gsheets.spreadsheet(_spreadsheetId);
     _worksheet = ss.worksheetByTitle('Worksheet1');
+    countRows();
+  }
+
+  // count the number of notes
+  static Future countRows() async {
+    while (
+        (await _worksheet!.values.value(column: 1, row: numberOfNotes + 1)) !=
+            '') {
+      numberOfNotes++;
+    }
+    // now we know how many notes to load
+    loadNotes();
+  }
+
+  // load existing notes from the spreadsheet
+  static Future loadNotes() async {
+    if (_worksheet == null) return;
+    for (int i = 0; i < numberOfNotes; i++) {
+      final String newNote =
+          await _worksheet!.values.value(column: 1, row: i + 1);
+      if (currentNotes.length < numberOfNotes) {
+        currentNotes.add(newNote);
+      }
+    }
+    loading = false;
   }
 
   // insert a new note

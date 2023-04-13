@@ -8,7 +8,7 @@ class NotesGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      itemCount: GoogleSheetsApi.numberOfNotes,
+      itemCount: GoogleSheetsApi.currentNotes.length,
       gridDelegate:
           const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 4),
       itemBuilder: (BuildContext context, int index) {
