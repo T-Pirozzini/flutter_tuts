@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_expense_tracker/models/expense_item.dart';
 import 'package:provider/provider.dart';
 
+import '../components/expense_tile.dart';
 import '../data/expense_data.dart';
 
 class HomePage extends StatefulWidget {
@@ -91,13 +92,26 @@ class _HomePageState extends State<HomePage> {
           onPressed: addNewExpense,
           child: const Icon(Icons.add),
         ),
-        body: ListView.builder(
-          itemCount: value.getAllExpenseList().length,
-          itemBuilder: (context, index) => ListTile(
-            title: Text(value.getAllExpenseList()[index].name),
-          ),
+        body: ListView(
+          children: [
+            // weekly summary
+
+            // expense list
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: value.getAllExpenseList().length,
+              itemBuilder: (context, index) => ExpenseTile(
+                name: value.getAllExpenseList()[index].name,
+                amount:
+                    '\$${double.parse(value.getAllExpenseList()[index].amount).toStringAsFixed(2)}',
+                dateTime: value.getAllExpenseList()[index].dateTime,
+              ),
+            ),
+          ],
         ),
       ),
     );
+    // your code here
   }
 }
