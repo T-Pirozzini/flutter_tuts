@@ -17,7 +17,9 @@ class _HomePageState extends State<HomePage> {
   // text ontrollers
   final TextEditingController newExpenseNameController =
       TextEditingController();
-  final TextEditingController newExpenseAmountController =
+  final TextEditingController newExpenseDollarController =
+      TextEditingController();
+  final TextEditingController newExpenseCentsController =
       TextEditingController();
 
   // add new expense
@@ -32,11 +34,36 @@ class _HomePageState extends State<HomePage> {
             // expense name
             TextField(
               controller: newExpenseNameController,
+              decoration: const InputDecoration(
+                hintText: 'Expense Name',
+              ),
             ),
 
             // expense amount
-            TextField(
-              controller: newExpenseAmountController,
+            Row(
+              children: [
+                // dollars
+                Expanded(
+                  child: TextField(
+                    controller: newExpenseDollarController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Dollars',
+                    ),
+                  ),
+                ),
+
+                // cents
+                Expanded(
+                  child: TextField(
+                    controller: newExpenseCentsController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: 'Cents',
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -59,10 +86,14 @@ class _HomePageState extends State<HomePage> {
 
   // save
   void save() {
+    // put dollars and cents together
+    String amount =
+        '${newExpenseDollarController.text}.${newExpenseCentsController.text}';
+
     // create expense item
     ExpenseItem newExpense = ExpenseItem(
       name: newExpenseNameController.text,
-      amount: newExpenseAmountController.text,
+      amount: amount,
       dateTime: DateTime.now(),
     );
     // add the new expense
@@ -81,7 +112,8 @@ class _HomePageState extends State<HomePage> {
   // clear controllers
   void clear() {
     newExpenseNameController.clear();
-    newExpenseAmountController.clear();
+    newExpenseDollarController.clear();
+    newExpenseCentsController.clear();
   }
 
   @override
@@ -91,12 +123,16 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.grey[300],
         floatingActionButton: FloatingActionButton(
           onPressed: addNewExpense,
+          backgroundColor: Colors.black,
           child: const Icon(Icons.add),
         ),
         body: ListView(
           children: [
             // weekly summary
             ExpenseSummary(startOfTheWeek: value.startOfWeekDate()),
+
+            const SizedBox(height: 20),
+
             // expense list
             ListView.builder(
               shrinkWrap: true,
