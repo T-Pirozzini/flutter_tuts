@@ -109,7 +109,7 @@ Widget getBottomTitles(double value, TitleMeta meta) {
       break;
   }
   return SideTitleWidget(
-    child: text,
     axisSide: meta.axisSide,
+    child: text,
   );
 }
