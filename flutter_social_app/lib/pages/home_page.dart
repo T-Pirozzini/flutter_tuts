@@ -3,6 +3,8 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter_social_app/components/text_field.dart";
 import "package:flutter_social_app/components/wall_post.dart";
+import "package:flutter_social_app/pages/profile_page.dart";
+import "../components/drawer.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -33,6 +35,19 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  // navigate to profile page
+  void goToProfilePage() {
+    // pop menu drawer
+    Navigator.pop(context);
+    // go to new page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ProfilePage(),
+      ),
+    );
+  }
+
   // sign user out
   void signOut() async {
     await FirebaseAuth.instance.signOut();
@@ -46,12 +61,16 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: const Text('The Wall'),
           backgroundColor: Colors.grey[800],
-          actions: [
-            IconButton(
-              onPressed: signOut,
-              icon: const Icon(Icons.logout),
-            ),
-          ],
+          // actions: [
+          //   IconButton(
+          //     onPressed: signOut,
+          //     icon: const Icon(Icons.logout),
+          //   ),
+          // ],
+        ),
+        drawer: MyDrawer(
+          onProfileTap: goToProfilePage,
+          onSignOutTap: signOut,
         ),
         body: Center(
           child: Column(
