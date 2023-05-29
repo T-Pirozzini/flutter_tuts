@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_social_app/components/button.dart';
 import 'package:flutter_social_app/components/text_field.dart';
@@ -18,10 +17,41 @@ class _LoginPageState extends State<LoginPage> {
 
   // sign user in
   void signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-      email: emailTextController.text,
-      password: passwordTextController.text,
+    // show loading circle
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
     );
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailTextController.text,
+        password: passwordTextController.text,
+      );
+      // pop loading circle
+      if (context.mounted) Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        // pop loading circle
+      if (context.mounted) Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No user found for that email.')),
+        );
+      } else if (e.code == 'wrong-password') {
+        // pop loading circle
+      if (context.mounted) Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Wrong password provided.')),
+        );
+      } else {
+        // pop loading circle
+      if (context.mounted) Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('The email is formatted incorrectly.')),
+        );
+      }
+    }
   }
 
   @override

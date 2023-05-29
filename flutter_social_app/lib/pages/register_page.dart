@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../components/button.dart';
 import '../components/text_field.dart';
@@ -15,6 +16,48 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController passwordTextController = TextEditingController();
   final TextEditingController confirmPasswordTextController =
       TextEditingController();
+
+  void signUp() async {
+    showDialog(
+      context: context,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    // make sure passwords match
+    if (passwordTextController.text != confirmPasswordTextController.text) {
+      Navigator.pop(context);
+      displayMessage('Passwords do not match');
+      return;
+    }
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailTextController.text,
+        password: passwordTextController.text,
+      );
+      if (context.mounted) Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        Navigator.pop(context);
+        displayMessage('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        Navigator.pop(context);
+        displayMessage('The account already exists for that email.');
+      } else {
+        Navigator.pop(context);
+        displayMessage('The email is formatted incorrectly.');
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      displayMessage('An error occurred. Please try again later.');
+    }
+  }
+
+  void displayMessage(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +95,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   obscureText: true,
                 ),
                 const SizedBox(height: 10),
-                MyButton(onTap: () {}, text: 'Sign Up'),
+                MyButton(onTap: signUp, text: 'Sign Up'),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

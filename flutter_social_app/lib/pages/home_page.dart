@@ -1,5 +1,8 @@
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
+import "package:flutter_social_app/components/text_field.dart";
+import "package:flutter_social_app/components/wall_post.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -9,9 +12,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+  final textController = TextEditingController();
+
+  void postMessage() {
+    // only post if there is something in the text field
+    if (textController.text.isNotEmpty) {
+      // add message to firestore
+      FirebaseFirestore.instance.collection('User Posts').add({
+        'message': textController.text,
+        'UserEmail': currentUser.email,
+        'TimeStamp': Timestamp.now(),
+      });
+      // clear text field
+      setState(() {
+        textController.clear();
+      });
+    }
+  }
 
   // sign user out
-  void signOut () async {
+  void signOut() async {
     await FirebaseAuth.instance.signOut();
   }
 
@@ -19,8 +41,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.grey[300],
         appBar: AppBar(
           title: const Text('The Wall'),
+          backgroundColor: Colors.grey[800],
           actions: [
             IconButton(
               onPressed: signOut,
@@ -28,8 +52,67 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        body: const Center(
-          child: Text('Welcome to The Wall!'),
+        body: Center(
+          child: Column(
+            children: [
+              // the wall
+              Expanded(
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('User Posts')
+                      .orderBy("TimeStamp", descending: false)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          // get the message
+                          final post = snapshot.data!.docs[index];
+                          return WallPost(
+                            message: post['message'],
+                            user: post['UserEmail'],
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text(snapshot.error.toString()),
+                      );
+                    }
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
+              ),
+              const Text('Welcome to The Wall!'),
+              // post message
+              Padding(
+                padding: const EdgeInsets.all(25.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: MyTextField(
+                        controller: textController,
+                        hintText: 'Write something on the wall...',
+                        obscureText: false,
+                      ),
+                    ),
+                    // post button
+                    IconButton(
+                      onPressed: postMessage,
+                      icon: const Icon(Icons.send),
+                    ),
+                  ],
+                ),
+              ),
+
+              // logged in as
+              Text('You are logged in as ${currentUser.email}'),
+              const SizedBox(height: 50),
+            ],
+          ),
         ),
       ),
     );
