@@ -21,9 +21,10 @@ class _HomePageState extends State<HomePage> {
     if (textController.text.isNotEmpty) {
       // add message to firestore
       FirebaseFirestore.instance.collection('User Posts').add({
-        'message': textController.text,
+        'Message': textController.text,
         'UserEmail': currentUser.email,
         'TimeStamp': Timestamp.now(),
+        "Likes": [],
       });
       // clear text field
       setState(() {
@@ -70,8 +71,10 @@ class _HomePageState extends State<HomePage> {
                           // get the message
                           final post = snapshot.data!.docs[index];
                           return WallPost(
-                            message: post['message'],
+                            message: post['Message'],
                             user: post['UserEmail'],
+                            postId: post.id,
+                            likes: List<String>.from(post['Likes'] ?? []),
                           );
                         },
                       );
