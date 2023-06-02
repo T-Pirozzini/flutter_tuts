@@ -3,16 +3,77 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter_social_app/components/text_box.dart";
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  // user
+  final currentUser = FirebaseAuth.instance.currentUser!;
+
+  // all users
+  final usersCollection = FirebaseFirestore.instance.collection('Users');
+
+  // edit field
+  Future<void> editField(String field) async {
+    String newValue = "";
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.grey[900],
+        title: Text(
+          "Edit $field",
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: TextField(
+          autofocus: true,
+          style: const TextStyle(color: Colors.white),
+          decoration: InputDecoration(
+            hintText: "Enter new $field",
+            hintStyle: const TextStyle(color: Colors.grey),
+          ),
+          onChanged: (value) {
+            newValue = value;
+          },
+        ),
+        actions: [
+          // cancel button
+          TextButton(
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+
+          // save button
+          TextButton(
+            child: const Text(
+              'Save',
+              style: TextStyle(color: Colors.white),
+            ),
+            onPressed: () => Navigator.of(context).pop(newValue),
+          ),
+        ],
+      ),
+    );
+
+    // update in Firestore
+    if (newValue.trim().isNotEmpty) {
+      // only update if there is something in the textfield
+      await usersCollection.doc(currentUser.email).update(
+        {
+          field: newValue,
+        },
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser!;
-
-    // edit field
-    Future<void> editField(String field) async {}
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('P R O F I L E'),
