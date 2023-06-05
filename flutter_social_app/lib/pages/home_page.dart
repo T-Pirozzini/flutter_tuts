@@ -5,6 +5,7 @@ import "package:flutter_social_app/components/text_field.dart";
 import "package:flutter_social_app/components/wall_post.dart";
 import "package:flutter_social_app/pages/profile_page.dart";
 import "../components/drawer.dart";
+import "../helper/helper_methods.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -94,6 +95,7 @@ class _HomePageState extends State<HomePage> {
                             user: post['UserEmail'],
                             postId: post.id,
                             likes: List<String>.from(post['Likes'] ?? []),
+                            time: formatDate(post['TimeStamp']),
                           );
                         },
                       );
