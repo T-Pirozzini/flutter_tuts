@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter_tetris_tut/values.dart';
 
 class Piece {
@@ -9,6 +11,11 @@ class Piece {
   // the piece is just a list of integers
   List<int> position = [];
 
+  // color of tetris piece
+  Color get color {
+    return tetronimoColors[type] ?? const Color(0xFFFFFFFF);
+  }
+
   // generate the integers
   void initializePiece() {
     switch (type) {
@@ -16,22 +23,22 @@ class Piece {
         position = [-26, -16, -6, -5];
         break;
       case Tetromino.J:
-        position = [-26, -16, -6, -7];
+        position = [-25, -15, -5, -6];
         break;
       case Tetromino.I:
-        position = [-26, -16, -6, 4];
+        position = [-4, -5, -6, -7];
         break;
       case Tetromino.O:
-        position = [-26, -16, -15, -5];
+        position = [-15, -16, -5, -6];
         break;
       case Tetromino.S:
-        position = [-26, -16, -15, -5];
+        position = [-15, -14, -6, -5];
         break;
       case Tetromino.Z:
-        position = [-26, -16, -5, -4];
+        position = [-17, -16, -6, -5];
         break;
       case Tetromino.T:
-        position = [-26, -16, -15, -5];
+        position = [-26, -16, -6, -15];
         break;
       default:
     }
