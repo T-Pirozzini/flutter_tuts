@@ -130,40 +130,107 @@ class _GameBoardState extends State<GameBoard> {
     currentPiece.initializePiece();
   }
 
+  // move left
+  void moveLeft() {
+    // make sure the move is valid before moving there
+    if (!checkCollision(Direction.left)) {
+      setState(() {
+        currentPiece.movePiece(Direction.left);
+      });
+    }
+  }
+
+  // move right
+  void moveRight() {
+    // make sure the move is valid before moving there
+    if (!checkCollision(Direction.right)) {
+      setState(() {
+        currentPiece.movePiece(Direction.right);
+      });
+    }
+  }
+
+  // rotate piece
+  void rotatePiece() {
+    setState(() {
+      currentPiece.rotatePiece();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: GridView.builder(
-        itemCount: rowLength * colLength,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: rowLength),
-        itemBuilder: (context, index) {
-          // get row and column of each index
-          int row = (index / rowLength).floor();
-          int col = (index % rowLength);
+      body: Column(
+        children: [
+          Expanded(
+            child: GridView.builder(
+              itemCount: rowLength * colLength,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: rowLength),
+              itemBuilder: (context, index) {
+                // get row and column of each index
+                int row = (index / rowLength).floor();
+                int col = (index % rowLength);
 
-          // current piece
-          if (currentPiece.position.contains(index)) {
-            return Pixel(
-              color: currentPiece.color,
-              child: index,
-            );
-          }
-          // landed pieces
-          else if (gameBoard[row][col] != null) {
-            final Tetromino? tetrominoType = gameBoard[row][col];
-            return Pixel(color: tetronimoColors[tetrominoType], child: '');
-          }
-          // blank pixel
-          else {
-            return Pixel(
-              color: Colors.grey[900],
-              child: index,
-            );
-          }
-        },
+                // current piece
+                if (currentPiece.position.contains(index)) {
+                  return Pixel(
+                    color: currentPiece.color,
+                    child: index,
+                  );
+                }
+                // landed pieces
+                else if (gameBoard[row][col] != null) {
+                  final Tetromino? tetrominoType = gameBoard[row][col];
+                  return Pixel(
+                      color: tetronimoColors[tetrominoType], child: '');
+                }
+                // blank pixel
+                else {
+                  return Pixel(
+                    color: Colors.grey[900],
+                    child: index,
+                  );
+                }
+              },
+            ),
+          ),
+          // GAME CONTROLS
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // left
+                IconButton(
+                  onPressed: moveLeft,
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: Colors.white,
+                  ),
+                ),
+                // rotate
+                IconButton(
+                  onPressed: rotatePiece,
+                  icon: Icon(
+                    Icons.rotate_right,
+                    color: Colors.white,
+                  ),
+                ),
+                // right
+                IconButton(
+                  onPressed: moveRight,
+                  icon: Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
