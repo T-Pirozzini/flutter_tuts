@@ -33,6 +33,9 @@ class _GameBoardState extends State<GameBoard> {
   // current tetris piece
   Piece currentPiece = Piece(type: Tetromino.T);
 
+  // current score
+  int currentScore = 0;
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +59,9 @@ class _GameBoardState extends State<GameBoard> {
       frameRate,
       (timer) {
         setState(() {
+          // clear lines
+          clearLines();
+
           // check landing
           checkLanding();
 
@@ -157,6 +163,38 @@ class _GameBoardState extends State<GameBoard> {
     });
   }
 
+  // clear lines
+  void clearLines() {
+    // step 1: loop through each row of the game board from bottom to top
+    for (int row = colLength - 1; row >= 0; row--) {
+      // step 2: Initialize a variable to track if the row is full
+      bool rowIsFull = true;
+
+      // step 3: check if the row is full (all columns are occupied)
+      for (int col = 0; col < rowLength; col++) {
+        // if there's an empty column, set rowIsFull to false and break out of the loop
+        if (gameBoard[row][col] == null) {
+          rowIsFull = false;
+          break;
+        }
+      }
+      // step 4: if the row is full, clear the row and shift rows down
+      if (rowIsFull) {
+        // step 5: move all rows above the cleared row down by one position
+        for (int r = row; r > 0; r--) {
+          // copy the above row to the current row
+          gameBoard[r] = List.from(gameBoard[r - 1]);
+        }
+
+        // step 6: set the top row to empty
+        gameBoard[0] = List.generate(row, (index) => null);
+
+        // step 7: increase the score
+        currentScore++;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -197,6 +235,16 @@ class _GameBoardState extends State<GameBoard> {
               },
             ),
           ),
+
+          // SCORE
+          Padding(
+            padding: const EdgeInsets.only(bottom: 50.0, top: 50.0),
+            child: Text(
+              'Score: $currentScore',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+
           // GAME CONTROLS
           Padding(
             padding: const EdgeInsets.only(bottom: 50.0),
@@ -206,7 +254,7 @@ class _GameBoardState extends State<GameBoard> {
                 // left
                 IconButton(
                   onPressed: moveLeft,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_back_ios,
                     color: Colors.white,
                   ),
@@ -214,7 +262,7 @@ class _GameBoardState extends State<GameBoard> {
                 // rotate
                 IconButton(
                   onPressed: rotatePiece,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.rotate_right,
                     color: Colors.white,
                   ),
@@ -222,7 +270,7 @@ class _GameBoardState extends State<GameBoard> {
                 // right
                 IconButton(
                   onPressed: moveRight,
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_forward_ios,
                     color: Colors.white,
                   ),
