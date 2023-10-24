@@ -36,6 +36,9 @@ class _GameBoardState extends State<GameBoard> {
   // current score
   int currentScore = 0;
 
+  // game over status
+  bool gameOver = false;
+
   @override
   void initState() {
     super.initState();
@@ -65,11 +68,61 @@ class _GameBoardState extends State<GameBoard> {
           // check landing
           checkLanding();
 
+          // check if game is over
+          if (gameOver) {
+            timer.cancel();
+            showGameOverDialog();
+          }
+
           // move piece down
           currentPiece.movePiece(Direction.down);
         });
       },
     );
+  }
+
+  // game over message
+  void showGameOverDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Game Over'),
+          content: Text('Score: $currentScore'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // reset the game
+                resetGame();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Play Again'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // reset game
+  void resetGame() {
+    // reset the game board
+    gameBoard = List.generate(
+      colLength,
+      (i) => List.generate(
+        rowLength,
+        (j) => null,
+      ),
+    );
+
+    // reset the score
+    currentScore = 0;
+
+    // reset the game over status
+    gameOver = false;
+
+    // start the game
+    startGame();
   }
 
   // check for collision in a future position
@@ -134,6 +187,10 @@ class _GameBoardState extends State<GameBoard> {
         Tetromino.values[rand.nextInt(Tetromino.values.length)];
     currentPiece = Piece(type: randomType);
     currentPiece.initializePiece();
+
+    if (isGameOver()) {
+      gameOver = true;
+    }
   }
 
   // move left
@@ -193,6 +250,19 @@ class _GameBoardState extends State<GameBoard> {
         currentScore++;
       }
     }
+  }
+
+  // Game over method
+  bool isGameOver() {
+    // check if any columns in the top row are filled
+    for (int col = 0; col < rowLength; col++) {
+      if (gameBoard[0][col] != null) {
+        return true;
+      }
+    }
+
+    // if the top row is empty, the game is not over
+    return false;
   }
 
   @override
