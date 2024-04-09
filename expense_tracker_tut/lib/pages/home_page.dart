@@ -4,6 +4,7 @@ import 'package:expense_tracker_tut/database/expense_database.dart';
 import 'package:expense_tracker_tut/helper/helper_functions.dart';
 import 'package:expense_tracker_tut/models/expense.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,10 +19,24 @@ class _HomePageState extends State<HomePage> {
   TextEditingController nameController = TextEditingController();
   TextEditingController amountController = TextEditingController();
 
+  // futures to load graph data
+  Future<Map<int, double>>? _monthlyTotalsFuture;
+
   @override
   void initState() {
+    // read db on initial startup
     Provider.of<ExpenseDatabase>(context, listen: false).readExpenses();
+
+    // load the futures
+    refreshGraphData();
+
     super.initState();
+  }
+
+  // refresh graph data
+  void refreshGraphData() {
+    _monthlyTotalsFuture = Provider.of<ExpenseDatabase>(context, listen: false)
+        .calculateMonthlyTotals();
   }
 
   // open new expense box
@@ -111,12 +126,17 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<ExpenseDatabase>(builder: (context, value, child) {
-
       // get dates
+      int startMonth = value.getStartMonth();
+      int startYear = value.getStartYear();
+      int currentMonth = DateTime.now().month;
+      int currentYear = DateTime.now().year;
 
       // calculate the number of months since the first month
+      int monthCount =
+          calculateMonthCount(startYear, startMonth, currentYear, currentMonth);
 
-      // only display the expenses
+      // only display the expenses for the current month
 
       // return UI
       return Scaffold(
@@ -124,31 +144,58 @@ class _HomePageState extends State<HomePage> {
           onPressed: openNewExpenseBox,
           child: const Icon(Icons.add),
         ),
-        body: Column(
-          children: [
-            // Graph UI
-            MyBarGraph(monthlySummary: monthlySummary, startMonth: startMonth),
-
-            // expense list UI
-            Expanded(
-              child: ListView.builder(
-                itemCount: value.allExpenses.length,
-                itemBuilder: (context, index) {
-                  // get inividual expense
-                  Expense individualExpense = value.allExpenses[index];
-
-                  // return list tile UI
-                  return MyListTile(
-                    title: individualExpense.name,
-                    trailing: formatAmount(individualExpense.amount),
-                    onEditPressed: (context) => openEditBox(individualExpense),
-                    onDeletePressed: (context) =>
-                        openDeleteBox(individualExpense),
-                  );
-                },
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Graph UI
+              SizedBox(
+                height: 250,
+                child: FutureBuilder(
+                  future: _monthlyTotalsFuture,
+                  builder: (context, snapshot) {
+                    // data is loaded
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      final monthlyTotals = snapshot.data ?? {};
+          
+                      // create the list of monthly summary
+                      List<double> monthlySummary = List.generate(monthCount,
+                          (index) => monthlyTotals[startMonth + index] ?? 0.0);
+          
+                      return MyBarGraph(
+                          monthlySummary: monthlySummary, startMonth: startMonth);
+                    }
+          
+                    // loading ...
+                    else {
+                      return const Center(
+                        child: Text('Loading...'),
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+          
+              // expense list UI
+              Expanded(
+                child: ListView.builder(
+                  itemCount: value.allExpenses.length,
+                  itemBuilder: (context, index) {
+                    // get inividual expense
+                    Expense individualExpense = value.allExpenses[index];
+          
+                    // return list tile UI
+                    return MyListTile(
+                      title: individualExpense.name,
+                      trailing: formatAmount(individualExpense.amount),
+                      onEditPressed: (context) => openEditBox(individualExpense),
+                      onDeletePressed: (context) =>
+                          openDeleteBox(individualExpense),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
       );
     });

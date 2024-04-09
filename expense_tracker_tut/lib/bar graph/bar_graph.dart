@@ -1,5 +1,6 @@
 import 'package:expense_tracker_tut/bar%20graph/individual_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class MyBarGraph extends StatefulWidget {
   final List<double> monthlySummary;
@@ -29,6 +30,9 @@ class _MyBarGraphState extends State<MyBarGraph> {
 
   @override
   Widget build(BuildContext context) {
-    return BarChart(data)
+    return BarChart(BarChartData(
+      minY: 0,
+      maxY: 100,
+    ));
   }
 }
