@@ -1,3 +1,4 @@
+import 'package:expense_tracker_tut/bar%20graph/bar_graph.dart';
 import 'package:expense_tracker_tut/components/my_list_tile.dart';
 import 'package:expense_tracker_tut/database/expense_database.dart';
 import 'package:expense_tracker_tut/helper/helper_functions.dart';
@@ -96,12 +97,12 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Expense'),        
+        title: const Text('Delete Expense'),
         actions: [
           // cancel button
           _cancelButton(),
           // delete button
-          _deleteExpenseButton(expense),
+          _deleteExpenseButton(expense.id),
         ],
       ),
     );
@@ -109,29 +110,48 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<ExpenseDatabase>(
-      builder: (context, value, child) => Scaffold(
+    return Consumer<ExpenseDatabase>(builder: (context, value, child) {
+
+      // get dates
+
+      // calculate the number of months since the first month
+
+      // only display the expenses
+
+      // return UI
+      return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: openNewExpenseBox,
           child: const Icon(Icons.add),
         ),
-        body: ListView.builder(
-          itemCount: value.allExpenses.length,
-          itemBuilder: (context, index) {
-            // get inividual expense
-            Expense individualExpense = value.allExpenses[index];
+        body: Column(
+          children: [
+            // Graph UI
+            MyBarGraph(monthlySummary: monthlySummary, startMonth: startMonth),
 
-            // return list tile UI
-            return MyListTile(
-              title: individualExpense.name,
-              trailing: formatAmount(individualExpense.amount),
-              onEditPressed: (context) => openEditBox(individualExpense),
-              onDeletePressed: (context) => openDeleteBox,
-            );
-          },
+            // expense list UI
+            Expanded(
+              child: ListView.builder(
+                itemCount: value.allExpenses.length,
+                itemBuilder: (context, index) {
+                  // get inividual expense
+                  Expense individualExpense = value.allExpenses[index];
+
+                  // return list tile UI
+                  return MyListTile(
+                    title: individualExpense.name,
+                    trailing: formatAmount(individualExpense.amount),
+                    onEditPressed: (context) => openEditBox(individualExpense),
+                    onDeletePressed: (context) =>
+                        openDeleteBox(individualExpense),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   // cancel button
@@ -202,5 +222,18 @@ class _HomePageState extends State<HomePage> {
           }
         },
         child: const Text('Save'));
+  }
+
+  // delete button
+  Widget _deleteExpenseButton(int id) {
+    return MaterialButton(
+        onPressed: () async {
+          // pop box
+          Navigator.pop(context);
+
+          // delete expense
+          await context.read<ExpenseDatabase>().deleteExpense(id);
+        },
+        child: const Text('Delete'));
   }
 }
