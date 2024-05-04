@@ -37,9 +37,19 @@ class HomeScreen extends ConsumerWidget {
                   Text('\$${allProducts[index].price}'),
                   cartProducts.contains(allProducts[index])
                       ? TextButton(
-                          onPressed: () {}, child: const Text("Remove"))
+                          onPressed: () {
+                            ref
+                                .read(cartNotifierProvider.notifier)
+                                .removeProduct(allProducts[index]);
+                          },
+                          child: const Text("Remove"))
                       : TextButton(
-                          onPressed: () {}, child: const Text("Add to Cart")),
+                          onPressed: () {
+                            ref
+                                .read(cartNotifierProvider.notifier)
+                                .addProduct(allProducts[index]);
+                          },
+                          child: const Text("Add to Cart")),
                 ]));
           },
         ),
