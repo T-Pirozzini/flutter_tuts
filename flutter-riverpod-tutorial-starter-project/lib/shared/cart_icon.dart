@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:riverpod_files/screens/cart/cart_screen.dart';
 
 class CartIcon extends StatelessWidget {
-  const CartIcon({super.key});
+  final int cartCount;
+  const CartIcon({super.key, required this.cartCount});
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class CartIcon extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               color: Colors.blueAccent,
             ),
+            child: Text(cartCount.toString()),
           ),
         ),
       ],
