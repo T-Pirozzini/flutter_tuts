@@ -1,5 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://byvk0rla00nil"]
+[gd_scene load_steps=7 format=3 uid="uid://byvk0rla00nil"]
 
+[ext_resource type="Script" path="res://scenes/level.gd" id="1_m66k8"]
 [ext_resource type="Texture2D" uid="uid://fthy5k1vobr5" path="res://graphics/level/tilesets/level_tilemap.png" id="1_py8lo"]
 [ext_resource type="PackedScene" uid="uid://bswlxof5luc3s" path="res://scenes/player.tscn" id="2_1utbx"]
 [ext_resource type="PackedScene" uid="uid://icgvx4xvbk5x" path="res://scenes/bee.tscn" id="3_uy2dj"]
@@ -108,11 +109,12 @@ physics_layer_0/collision_layer = 1
 sources/0 = SubResource("TileSetAtlasSource_b6lh2")
 
 [node name="Level" type="Node2D"]
+script = ExtResource("1_m66k8")
 
 [node name="Terrain" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_4ltk8")
 format = 2
-layer_0/tile_data = PackedInt32Array(131074, 589824, 0, 131075, 589824, 0, 131077, 589824, 0, 131076, 589824, 0, 262152, 589824, 0, 262153, 589824, 0, 262154, 589824, 0, 262155, 589824, 0, 524299, 589824, 0, 458764, 589824, 0, 458765, 589824, 0, 458766, 589824, 0, 524302, 589824, 0, 196627, 589824, 0, 196626, 589824, 0, 65555, 589824, 0, 131092, 589824, 0, 131093, 589824, 0, 262166, 589824, 0, 196630, 589824, 0, 458752, 589824, 0, 458751, 589824, 0, 393214, 589824, 0, 327678, 589824, 0, 327677, 589824, 0, 458753, 589824, 0, 458755, 589824, 0, 524291, 589824, 0, 458754, 589824, 0)
+layer_0/tile_data = PackedInt32Array(131074, 589824, 0, 131075, 589824, 0, 131077, 589824, 0, 131076, 589824, 0, 262152, 589824, 0, 262153, 589824, 0, 262154, 589824, 0, 262155, 589824, 0, 524299, 589824, 0, 458764, 589824, 0, 458765, 589824, 0, 458766, 589824, 0, 524302, 589824, 0, 196627, 589824, 0, 196626, 589824, 0, 65555, 589824, 0, 131092, 589824, 0, 131093, 589824, 0, 262166, 589824, 0, 196630, 589824, 0, 458752, 589824, 0, 458751, 589824, 0, 393214, 589824, 0, 327678, 589824, 0, 327677, 589824, 0, 458753, 589824, 0, 458755, 589824, 0, 524291, 589824, 0, 458754, 589824, 0, 262156, 262144, 0, 262157, 262144, 0, 262158, 262144, 0, 262151, 262144, 0, 262150, 262144, 0, 262149, 262144, 0, 262159, 262144, 0, 262160, 262144, 0)
 
 [node name="Player" parent="." instance=ExtResource("2_1utbx")]
 position = Vector2(147, 57)
@@ -121,3 +123,7 @@ position = Vector2(147, 57)
 position = Vector2(178, 45)
 
 [node name="Bee" parent="Enemies" instance=ExtResource("3_uy2dj")]
+
+[node name="Bullets" type="Node2D" parent="."]
+
+[connection signal="shoot" from="Player" to="." method="_on_player_shoot"]
