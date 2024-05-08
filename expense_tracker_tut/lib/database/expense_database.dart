@@ -67,27 +67,48 @@ class ExpenseDatabase extends ChangeNotifier {
   */
 
   // calculate total expenses for each month
-  Future<Map<int, double>> calculateMonthlyTotals() async {
+  Future<Map<String, double>> calculateMonthlyTotals() async {
     // ensure the expenses are read from the db
     await readExpenses();
 
-    // create a map to keep track of total expenses per month
-    Map<int, double> monthlyTotals = {};
+    // create a map to keep track of total expenses per month, year
+    Map<String, double> monthlyTotals = {};
 
     // iterate over all expenses
     for (var expense in _allExpenses) {
-      // extract the month from the date of the expense
-      int month = expense.date.month;
+      // extract year & month from the date of the expense      
+      String yearMonth = '${expense.date.year.toString()}-${expense.date.month.toString()}';
 
-      // if the month is not in the map, initialize 0
-      if (!monthlyTotals.containsKey(month)) {
-        monthlyTotals[month] = 0;
+      // if the year-month is not in the map, initialize 0
+      if (!monthlyTotals.containsKey(yearMonth)) {
+        monthlyTotals[yearMonth] = 0;
       }
 
       // add the expesnse amount to the total for the month
-      monthlyTotals[month] = monthlyTotals[month]! + expense.amount;
+      monthlyTotals[yearMonth] = monthlyTotals[yearMonth]! + expense.amount;
     }
     return monthlyTotals;
+  }
+
+  // calculate current month total
+  Future<double> calculateCurrentMonthTotal() async {
+    // ensure expenses are read from the db first
+    await readExpenses();
+
+    // get current month and year
+    int currentMonth = DateTime.now().month;
+    int currentYear = DateTime.now().year;
+
+    // filter the expenses to include only those for this month this year
+    List<Expense> currentMonthExpenses = _allExpenses.where((expense) {
+      return expense.date.month == currentMonth &&
+          expense.date.year == currentYear;
+    }).toList();
+
+    // calculate total amount for the current month
+    double total =
+        currentMonthExpenses.fold(0, (sum, expense) => sum + expense.amount);
+    return total;
   }
 
   // get start month
