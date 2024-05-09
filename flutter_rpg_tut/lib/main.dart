@@ -15,11 +15,14 @@ class Sandbox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Sandbox'),
-          centerTitle: true,
-          backgroundColor: Colors.grey,
-        ),
-        body: const Center(child: Text('sandbox')));
+      appBar: AppBar(
+        title: const Text('Sandbox'),
+        centerTitle: true,
+        backgroundColor: Colors.grey,
+      ),
+      body: const Center(
+        child: Text('sandbox'),
+      ),
+    );
   }
 }
