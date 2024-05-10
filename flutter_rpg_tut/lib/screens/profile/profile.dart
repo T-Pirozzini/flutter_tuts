@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rpg_tut/models/character.dart';
+import 'package:flutter_rpg_tut/screens/profile/stats_table.dart';
 import 'package:flutter_rpg_tut/shared/styled_text.dart';
 import 'package:flutter_rpg_tut/theme.dart';
 
@@ -11,11 +12,11 @@ class Profile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: StyledTitle(character.name),
-        ),
-        body: SingleChildScrollView(
-            child: Column(
+      appBar: AppBar(
+        title: StyledTitle(character.name),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // basic info - image, vocation, description
@@ -40,11 +41,48 @@ class Profile extends StatelessWidget {
                 ])),
 
             // weapon & ability
+            const SizedBox(height: 20),
+            Center(
+              child: Icon(Icons.code, color: AppColors.primaryColor),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                color: AppColors.secondaryColor.withOpacity(0.5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const StyledHeading('Slogan'),
+                    StyledText(character.slogan),
+                    const SizedBox(height: 10),
+                    const StyledHeading('Weapon of Choice'),
+                    StyledText(character.vocation.weapon),
+                    const SizedBox(height: 10),
+                    const StyledHeading('Unique Ability'),
+                    StyledText(character.vocation.ability),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
+            ),
 
             // stats & skills
+            Container(
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  StatsTable(character),
+                ],
+              ),
+            ),
 
             // save button
           ],
-        )));
+        ),
+      ),
+    );
   }
 }
