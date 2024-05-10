@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rpg_tut/models/character.dart';
 import 'package:flutter_rpg_tut/models/vocation.dart';
 import 'package:flutter_rpg_tut/screens/create/vocation_card.dart';
+import 'package:flutter_rpg_tut/screens/home/home.dart';
 import 'package:flutter_rpg_tut/shared/styled_button.dart';
 import 'package:flutter_rpg_tut/shared/styled_text.dart';
 import 'package:flutter_rpg_tut/theme.dart';
@@ -41,18 +42,62 @@ class _CreateState extends State<Create> {
   void handleSubmit() {
     if (_nameController.text.trim().isEmpty) {
       // show error dialog
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title:
+                  const Center(child: StyledHeading('Missing Character Name')),
+              content: const StyledText(
+                  'Every good RPG character needs a great name...'),
+              actions: [
+                StyledButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                  },
+                  child: const StyledHeading('close'),
+                )
+              ],
+              actionsAlignment: MainAxisAlignment.center,
+            );
+          });
       return;
     }
     if (_sloganController.text.trim().isEmpty) {
       // show error dialog
+      showDialog(
+          context: context,
+          builder: (ctx) {
+            return AlertDialog(
+              title: const Center(child: StyledHeading('Missing Slogan')),
+              content: const StyledText('Remember to add a catchy slogan...'),
+              actions: [
+                StyledButton(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                  },
+                  child: const StyledHeading('close'),
+                )
+              ],
+              actionsAlignment: MainAxisAlignment.center,
+            );
+          });
       return;
     }
-    characters.add(Character(
-      name: _nameController.text.trim(),
-      slogan: _sloganController.text.trim(),
-      vocation: selectedVocation,
-      id: uuid.v4(),
-    ));
+    characters.add(
+      Character(
+        name: _nameController.text.trim(),
+        slogan: _sloganController.text.trim(),
+        vocation: selectedVocation,
+        id: uuid.v4(),
+      ),
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (ctx) => const Home(),
+      ),
+    );
   }
 
   @override
@@ -135,7 +180,7 @@ class _CreateState extends State<Create> {
               selected: selectedVocation == Vocation.wizard,
             ),
 
-            // good lukc message
+            // good luck message
             Center(
               child: Icon(Icons.code, color: AppColors.primaryColor),
             ),
