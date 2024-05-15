@@ -3,10 +3,12 @@ import 'package:flutter_rpg_tut/models/character.dart';
 import 'package:flutter_rpg_tut/models/vocation.dart';
 import 'package:flutter_rpg_tut/screens/create/vocation_card.dart';
 import 'package:flutter_rpg_tut/screens/home/home.dart';
+import 'package:flutter_rpg_tut/services/character_store.dart';
 import 'package:flutter_rpg_tut/shared/styled_button.dart';
 import 'package:flutter_rpg_tut/shared/styled_text.dart';
 import 'package:flutter_rpg_tut/theme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
@@ -84,7 +86,8 @@ class _CreateScreenState extends State<CreateScreen> {
           });
       return;
     }
-    characters.add(
+
+    Provider.of<CharacterStore>(context, listen: false).addCharacter(
       Character(
         name: _nameController.text.trim(),
         slogan: _sloganController.text.trim(),
@@ -92,6 +95,7 @@ class _CreateScreenState extends State<CreateScreen> {
         id: uuid.v4(),
       ),
     );
+
     Navigator.push(
       context,
       MaterialPageRoute(
