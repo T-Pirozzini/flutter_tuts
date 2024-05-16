@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rpg_tut/models/character.dart';
+import 'package:flutter_rpg_tut/screens/profile/heart.dart';
 import 'package:flutter_rpg_tut/screens/profile/skill_list.dart';
 import 'package:flutter_rpg_tut/screens/profile/stats_table.dart';
 import 'package:flutter_rpg_tut/services/character_store.dart';
@@ -25,9 +26,10 @@ class Profile extends StatelessWidget {
           children: [
             // basic info - image, vocation, description
             Container(
-                padding: const EdgeInsets.all(16),
-                color: AppColors.secondaryColor.withOpacity(0.3),
-                child: Row(children: [
+              padding: const EdgeInsets.all(16),
+              color: AppColors.secondaryColor.withOpacity(0.3),
+              child: Row(
+                children: [
                   Hero(
                     tag: character.id.toString(),
                     child: Image.asset(
@@ -45,7 +47,11 @@ class Profile extends StatelessWidget {
                       ],
                     ),
                   )
-                ])),
+                ],
+              ),
+            ),
+
+            Heart(character: character),
 
             // weapon & ability
             const SizedBox(height: 20),
@@ -90,7 +96,8 @@ class Profile extends StatelessWidget {
             // save button
             StyledButton(
               onPressed: () {
-              Provider.of<CharacterStore>(context, listen: false).saveCharacter(character);
+                Provider.of<CharacterStore>(context, listen: false)
+                    .saveCharacter(character);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const StyledHeading('Character was saved.'),
