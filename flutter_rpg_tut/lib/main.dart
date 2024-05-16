@@ -16,13 +16,15 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => CharacterStore(),
-    child: MaterialApp(
-      theme: primaryTheme,
-      home: const Home(),
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => CharacterStore(),
+      child: MaterialApp(
+        theme: primaryTheme,
+        home: const Home(),
+      ),
     ),
-  ));
+  );
 }
 
 class Sandbox extends StatelessWidget {
