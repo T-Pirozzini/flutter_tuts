@@ -25,33 +25,37 @@ class Profile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // basic info - image, vocation, description
-            Container(
-              padding: const EdgeInsets.all(16),
-              color: AppColors.secondaryColor.withOpacity(0.3),
-              child: Row(
-                children: [
-                  Hero(
-                    tag: character.id.toString(),
-                    child: Image.asset(
-                        'assets/img/vocations/${character.vocation.image}',
-                        width: 140,
-                        height: 140),
+            Stack(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  color: AppColors.secondaryColor.withOpacity(0.3),
+                  child: Row(
+                    children: [
+                      Hero(
+                        tag: character.id.toString(),
+                        child: Image.asset(
+                            'assets/img/vocations/${character.vocation.image}',
+                            width: 140,
+                            height: 140),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            StyledHeading(character.vocation.title),
+                            StyledText(character.vocation.description),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        StyledHeading(character.vocation.title),
-                        StyledText(character.vocation.description),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                ),
+                Positioned(
+                    top: 10, right: 10, child: Heart(character: character)),
+              ],
             ),
-
-            Heart(character: character),
 
             // weapon & ability
             const SizedBox(height: 20),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rpg_tut/models/character.dart';
+import 'package:flutter_rpg_tut/theme.dart';
 import 'package:provider/provider.dart';
 
 class Heart extends StatefulWidget {
@@ -39,7 +40,9 @@ class _HeartState extends State<Heart> with SingleTickerProviderStateMixin {
         return IconButton(
           icon: Icon(
             Icons.favorite,
-            color: Colors.grey[800],
+            color: widget.character.isFav
+                ? AppColors.primaryAccent
+                : Colors.grey[800],
             size: _sizeAnimation.value,
           ),
           onPressed: () {
