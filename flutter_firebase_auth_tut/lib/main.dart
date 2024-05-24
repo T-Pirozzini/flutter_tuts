@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_auth_tut/models/app_user.dart';
+import 'package:flutter_auth_tut/providers/auth_provider.dart';
 import 'package:flutter_auth_tut/screens/profile/profile.dart';
 import 'package:flutter_auth_tut/screens/welcome/welcome.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -12,7 +15,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -22,11 +25,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: const WelcomeScreen());
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: Consumer(
+        builder: (context, ref, child) {
+          final AsyncValue<AppUser?> user = ref.watch(authProvider);
+
+          return user.when(
+            data: (value) {
+              if (value == null) {
+                return const WelcomeScreen();
+              }
+              return ProfileScreen(user: value);
+            },
+            error: (error, _) => const Text('error loading auth status...'),
+            loading: () => const Text('loading...'),
+          );
+        },
+      ),
+    );
   }
 }
