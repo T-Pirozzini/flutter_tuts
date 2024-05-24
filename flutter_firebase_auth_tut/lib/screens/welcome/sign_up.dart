@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_auth_tut/services/auth_service.dart';
 import 'package:flutter_auth_tut/shared/styled_button.dart';
 import 'package:flutter_auth_tut/shared/styled_text.dart';
 
@@ -14,6 +14,8 @@ class _SignUpFormState extends State<SignUpForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  String? _errorFeedback;
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +67,11 @@ class _SignUpFormState extends State<SignUpForm> {
             const SizedBox(height: 16.0),
 
             // error feedback
+            if (_errorFeedback != null)
+              Text(
+                _errorFeedback!,
+                style: const TextStyle(color: Colors.red),
+              ),
 
             // submit button
             StyledButton(
@@ -73,8 +80,14 @@ class _SignUpFormState extends State<SignUpForm> {
                   final email = _emailController.text.trim();
                   final password = _passwordController.text.trim();
 
-                  print(email);
-                  print(password);
+                  final user = await AuthService.signUp(email, password);
+
+                  // error feedback
+                  if (user == null) {
+                    setState(() {
+                      _errorFeedback = 'Could not sign up with those details';
+                    });
+                  }
                 }
               },
               child: const StyledButtonText('Sign Up'),
